@@ -11,10 +11,38 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import {useState} from "react";
+import {useAppDispatch} from "../../redux/hooks";
+import {Account} from '../../../../blog/common/account'
+import {ErrorResponse} from '../../../../blog/common'
+import axios from "axios";
+import {logIn} from "../../redux/slices/accountSlice";
+import {useNavigate} from "react-router-dom";
 
 
 const LogInPage = () => {
+    const [email, setEmail] = useState('')
+    const [pwd, setPwd] = useState('')
+    const dispatch = useAppDispatch()
+    const navigate = useNavigate()
+    const onLogIn = () => {
+        const account: Account = {
+            email: email,
+            pwd: pwd
+        }
+        axios({
+            url: "/api/account/logIn",
+            method: 'post',
+            data: account
+        })
+            .then((result) => {
+                dispatch(logIn(account))
+                navigate("/home")
+            })
+            .catch((err: ErrorResponse) => {
+
+            })
+    }
 
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
@@ -54,21 +82,21 @@ const LogInPage = () => {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
                             label="Email Address"
-                            name="email"
                             autoComplete="email"
                             autoFocus
+                            value={email}
+                            onChange={e => setEmail(e.target.value)}
                         />
                         <TextField
                             margin="normal"
                             required
                             fullWidth
-                            name="password"
                             label="Password"
                             type="password"
-                            id="password"
                             autoComplete="current-password"
+                            value={pwd}
+                            onChange={e => setPwd(e.target.value)}
                         />
                         <FormControlLabel
                             control={<Checkbox value="remember" color="primary" />}

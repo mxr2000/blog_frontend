@@ -11,15 +11,35 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
 import {useState} from "react";
-
+import axios from "axios";
+import {Account} from '../../../../blog/common/account'
+import {ErrorResponse} from '../../../../blog/common'
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [pwd, setPwd] = useState('')
     const [repeatedPwd, setRepeatedPwd] = useState('')
+
+    const register = () => {
+        const account: Account = {
+            email: email,
+            pwd: pwd,
+            username: username
+        }
+        axios({
+            method: 'post',
+            url: '/api/account/register',
+            data: account
+        })
+            .then((result) => {
+
+            })
+            .catch((err: ErrorResponse) => {
+
+            })
+    }
 
     return (
         <Grid container component="main" sx={{ height: '100vh' }}>
@@ -74,7 +94,7 @@ const RegisterPage = () => {
                             name="username"
                             label="Username"
                             id="username"
-                            autoComplete="current-password"
+                            autoComplete="username"
                             value={username}
                             onChange={e => setUsername(e.target.value)}
                         />
@@ -98,7 +118,7 @@ const RegisterPage = () => {
                             label="Repeat Password"
                             type="password"
                             id="password"
-                            autoComplete="current-password"
+                            autoComplete="repeated-password"
                             value={repeatedPwd}
                             onChange={e => setRepeatedPwd(e.target.value)}
                         />
