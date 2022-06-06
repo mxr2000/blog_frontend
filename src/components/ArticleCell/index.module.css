@@ -1,7 +1,6 @@
 .container {
     display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: auto auto;
+    grid-template-columns: auto 1fr auto;
     grid-gap: 5px;
     margin: 5px;
     padding: 5px;
@@ -9,18 +8,25 @@
 }
 
 .username {
-    grid-row: 2 / 3;
-    grid-column: 1 / 2;
-    color: darkgray;
+    color: black;
     justify-self: center;
 }
 
 .header {
-    grid-row: 1 / 2;
-    grid-column: 2 / 3;
+    text-decoration: none;
+    color: black;
 }
 
-.bottomInfoContainer {
-    grid-row: 2 / 3;
-    grid-column: 2 / 3;
+.time {
+    margin-left: 5px;
+    color: darkgray;
+    font-size: small;
+}
+
+.thumbContainer {
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    margin-top: 5px;
+    gap: 5px;
 }

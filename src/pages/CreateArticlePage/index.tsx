@@ -9,16 +9,24 @@ import {
     FormControl,
     InputLabel, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
 } from "@mui/material";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {Article} from '../../../../blog/common/article'
+import {Block} from '../../../../blog/common/block'
 import {ErrorResponse} from '../../../../blog/common/index'
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import {useSelector} from "react-redux";
+import {selectAccount, selectToken} from "../../redux/slices/accountSlice";
+import {selectBlocks} from "../../redux/slices/blocksSlice";
 
 
 const CreateArticlePage = () => {
     const [header, setHeader] = useState('')
     const [content, setContent] = useState('')
+    const blocks = useSelector(selectBlocks)
+    const [blockId, setBlockId] = useState<number>(blocks[0].id)
+    const account = useSelector(selectAccount)
+    const token = useSelector(selectToken)
     const navigate = useNavigate()
 
     const [open, setOpen] = useState(false);
@@ -32,29 +40,44 @@ const CreateArticlePage = () => {
     };
 
     const submitArticle = () => {
+        console.log(blockId)
+        if (!account || !token) {
+            setOpen(true)
+            return
+        }
         const article: Article = {
-            email: "",
-            blockId: 0,
+            email: account.email,
+            blockId: blockId,
             header: header,
             content: content
         }
         axios({
-            method: 'get',
+            method: 'post',
             data: article,
+            url: "/api/article",
+            headers: {
+                "authorization": "Bearer " + token
+            }
         })
             .then((result) => {
-
+                console.log(result)
+                navigate("/home")
             })
             .catch((err: ErrorResponse) => {
-
+                console.log(err)
+                setOpen(true)
             })
-
-
     }
+
+    useEffect(() => {
+        if (!account) {
+            navigate("/")
+        }
+    }, [])
 
 
     return (
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{flexGrow: 1}}>
             <MainAppBar/>
             <Container>
                 <Box
@@ -72,13 +95,13 @@ const CreateArticlePage = () => {
                                 <Select
                                     label="Block"
                                     fullWidth={true}
+                                    onChange={e => setBlockId(e.target.value as number)}
+                                    defaultValue={blocks[0].id}
                                 >
-                                    <MenuItem value="">
-                                        <em>None</em>
-                                    </MenuItem>
-                                    <MenuItem value={10}>Ten</MenuItem>
-                                    <MenuItem value={20}>Twenty</MenuItem>
-                                    <MenuItem value={30}>Thirty</MenuItem>
+                                    {
+                                        blocks.map((block, index) => <MenuItem value={block.id}
+                                                                               key={index}>{block.name}</MenuItem>)
+                                    }
                                 </Select>
                             </FormControl>
 
@@ -104,7 +127,7 @@ const CreateArticlePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12} md={12}>
-                            <Button fullWidth={true} onClick={handleClickOpen}>submit</Button>
+                            <Button fullWidth={true} onClick={submitArticle}>submit</Button>
                             <Dialog
                                 open={open}
                                 onClose={handleClose}

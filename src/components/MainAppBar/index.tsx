@@ -2,6 +2,7 @@ import {AppBar, Badge, Button, IconButton, Toolbar, Typography} from "@mui/mater
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import {useState} from "react";
+import {Link} from "react-router-dom";
 
 
 const MainAppBar = () => {
@@ -14,21 +15,24 @@ const MainAppBar = () => {
                     edge="start"
                     color="inherit"
                     aria-label="menu"
-                    sx={{ mr: 2 }}
+                    sx={{mr: 2}}
                     onClick={() => setOpen(true)}
                 >
                     <MenuIcon/>
                 </IconButton>
-                <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                    LEGAL FORUM
-                </Typography>
+                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                        <a href={"/home"} style={{textDecoration: 'none', color: 'white'}}>
+                            LEGAL FORUM
+                        </a>
+
+                    </Typography>
                 <IconButton
                     size="large"
                     aria-label="show 17 new notifications"
                     color="inherit"
                 >
                     <Badge badgeContent={17} color="error">
-                        <NotificationsIcon />
+                        <NotificationsIcon/>
                     </Badge>
                 </IconButton>
                 <Button color="inherit">Login</Button>

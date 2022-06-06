@@ -22,7 +22,7 @@ const RegisterPage = () => {
     const [pwd, setPwd] = useState('')
     const [repeatedPwd, setRepeatedPwd] = useState('')
 
-    const register = () => {
+    const onRegistered = () => {
         const account: Account = {
             email: email,
             pwd: pwd,

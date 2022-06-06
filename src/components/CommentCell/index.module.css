@@ -1,0 +1,24 @@
+.container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-gap: 10px;
+    margin: 5px;
+    padding: 5px;
+    background-color: white;
+}
+
+.username {
+    margin-top: 2px;
+    color: black;
+    justify-self: center;
+}
+
+.content {
+    margin-top: 4px;
+}
+
+.time {
+    font-size: small;
+    color: darkgray;
+}
+

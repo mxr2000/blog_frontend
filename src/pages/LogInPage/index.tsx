@@ -11,20 +11,25 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useAppDispatch} from "../../redux/hooks";
-import {Account} from '../../../../blog/common/account'
+import {Account, LogInSuccessResponse} from '../../../../blog/common/account'
 import {ErrorResponse} from '../../../../blog/common'
-import axios from "axios";
+import axios, {AxiosResponse} from "axios";
 import {logIn} from "../../redux/slices/accountSlice";
 import {useNavigate} from "react-router-dom";
+import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
+import useLocalStorage from "../../hooks/useLocalStorage";
 
 
 const LogInPage = () => {
-    const [email, setEmail] = useState('')
-    const [pwd, setPwd] = useState('')
+    const [email, setEmail] = useState('mxr@qq.com')
+    const [pwd, setPwd] = useState('654321')
     const dispatch = useAppDispatch()
     const navigate = useNavigate()
+    const [errorDialogOpen, setErrorDialogOpen] = useState(false)
+    const [account, setAccount] = useLocalStorage<Account | undefined>('account', undefined)
+    const [token, setToken] = useLocalStorage<string | undefined>('token', undefined)
     const onLogIn = () => {
         const account: Account = {
             email: email,
@@ -35,18 +40,30 @@ const LogInPage = () => {
             method: 'post',
             data: account
         })
-            .then((result) => {
-                dispatch(logIn(account))
+            .then((result: AxiosResponse<LogInSuccessResponse>) => {
+                console.log(result)
+                setAccount(result.data.data.account)
+                setToken(result.data.data.token)
+                dispatch(logIn(result.data.data))
+
                 navigate("/home")
             })
             .catch((err: ErrorResponse) => {
-
+                setErrorDialogOpen(true)
             })
     }
+    useEffect(() => {
+        if (account != undefined && token != undefined) {
+            dispatch(logIn({
+                account, token
+            }))
+            navigate("/home")
+        }
+    }, [])
 
     return (
-        <Grid container component="main" sx={{ height: '100vh' }}>
-            <CssBaseline />
+        <Grid container component="main" sx={{height: '100vh'}}>
+            <CssBaseline/>
             <Grid
                 item
                 xs={false}
@@ -71,13 +88,13 @@ const LogInPage = () => {
                         alignItems: 'center',
                     }}
                 >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockOutlinedIcon />
+                    <Avatar sx={{m: 1, bgcolor: 'secondary.main'}}>
+                        <LockOutlinedIcon/>
                     </Avatar>
                     <Typography component="h1" variant="h5">
                         Sign in
                     </Typography>
-                    <Box component="form" noValidate sx={{ mt: 1 }}>
+                    <Box component="form" noValidate sx={{mt: 1}}>
                         <TextField
                             margin="normal"
                             required
@@ -99,14 +116,14 @@ const LogInPage = () => {
                             onChange={e => setPwd(e.target.value)}
                         />
                         <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
+                            control={<Checkbox value="remember" color="primary"/>}
                             label="Remember me"
                         />
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
+                            sx={{mt: 3, mb: 2}}
+                            onClick={onLogIn}
                         >
                             Sign In
                         </Button>
@@ -125,6 +142,26 @@ const LogInPage = () => {
                     </Box>
                 </Box>
             </Grid>
+            <Dialog
+                open={errorDialogOpen}
+                onClose={() => setErrorDialogOpen(false)}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle id="alert-dialog-title">
+                    Error
+                </DialogTitle>
+                <DialogContent>
+                    <DialogContentText id="alert-dialog-description">
+                        Wrong email or pwd
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button autoFocus onClick={() => setErrorDialogOpen(false)}>
+                        close
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Grid>
     )
 }
