@@ -1,8 +1,8 @@
-import {useState} from "react";
+import {Dispatch, SetStateAction, useState} from "react";
 
 
-function useLocalStorage<T>(key: string, initialValue: T) {
-    const [storedValue, setStoredValue] = useState(() => {
+function useLocalStorage<T>(key: string, initialValue: T): [T | undefined, (value: T | undefined) => void] {
+    const [storedValue, setStoredValue] = useState<T | undefined>(() => {
         if (typeof window === "undefined") {
             return initialValue;
         }
@@ -14,11 +14,16 @@ function useLocalStorage<T>(key: string, initialValue: T) {
             return initialValue;
         }
     });
-    const setValue = (value: T) => {
+    const setValue = (value: T | undefined) => {
         try {
             setStoredValue(value);
             if (typeof window !== "undefined") {
-                window.localStorage.setItem(key, JSON.stringify(value));
+                if (value == undefined) {
+                    window.localStorage.removeItem(key)
+                    setStoredValue(undefined)
+                } else {
+                    window.localStorage.setItem(key, JSON.stringify(value));
+                }
             }
         } catch (error) {
             console.log(error);

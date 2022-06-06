@@ -12,11 +12,9 @@ import Grid from '@mui/material/Grid';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import {useEffect, useState} from "react";
-import {useAppDispatch} from "../../redux/hooks";
 import {Account, LogInSuccessResponse} from '../../../../blog/common/account'
 import {ErrorResponse} from '../../../../blog/common'
 import axios, {AxiosResponse} from "axios";
-import {logIn} from "../../redux/slices/accountSlice";
 import {useNavigate} from "react-router-dom";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import useLocalStorage from "../../hooks/useLocalStorage";
@@ -25,7 +23,6 @@ import useLocalStorage from "../../hooks/useLocalStorage";
 const LogInPage = () => {
     const [email, setEmail] = useState('mxr@qq.com')
     const [pwd, setPwd] = useState('654321')
-    const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const [errorDialogOpen, setErrorDialogOpen] = useState(false)
     const [account, setAccount] = useLocalStorage<Account | undefined>('account', undefined)
@@ -44,8 +41,6 @@ const LogInPage = () => {
                 console.log(result)
                 setAccount(result.data.data.account)
                 setToken(result.data.data.token)
-                dispatch(logIn(result.data.data))
-
                 navigate("/home")
             })
             .catch((err: ErrorResponse) => {
@@ -54,9 +49,6 @@ const LogInPage = () => {
     }
     useEffect(() => {
         if (account != undefined && token != undefined) {
-            dispatch(logIn({
-                account, token
-            }))
             navigate("/home")
         }
     }, [])

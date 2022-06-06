@@ -11,8 +11,10 @@ import AccountInfoPage from "./pages/AccountInfoPage";
 import {Provider} from "react-redux";
 import store from './redux/store'
 import CounterPage from "./pages/CounterPage";
+import axios from "axios";
 
 function App() {
+    axios.defaults.baseURL = "http://34.67.235.141:8000/"
     return (
         <Provider store={store}>
             <BrowserRouter>

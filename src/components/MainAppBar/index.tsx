@@ -2,11 +2,21 @@ import {AppBar, Badge, Button, IconButton, Toolbar, Typography} from "@mui/mater
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import {useState} from "react";
-import {Link} from "react-router-dom";
-
+import {Link, useNavigate} from "react-router-dom";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import {Account} from '../../../../blog/common/account'
 
 const MainAppBar = () => {
     const [open, setOpen] = useState(false)
+    const [account, setAccount] = useLocalStorage<Account | undefined>('account', undefined)
+    const [token, setToken] = useLocalStorage<string | undefined>('token', undefined)
+    const navigate = useNavigate()
+
+    const logOut = () => {
+        setAccount(undefined)
+        setToken(undefined)
+        navigate("/")
+    }
     return (
         <AppBar position={"static"}>
             <Toolbar>
@@ -35,7 +45,17 @@ const MainAppBar = () => {
                         <NotificationsIcon/>
                     </Badge>
                 </IconButton>
-                <Button color="inherit">Login</Button>
+                <Button color="inherit" onClick={() => {
+                    if (account) {
+                        logOut()
+                    } else {
+                        navigate("/")
+                    }
+                }}>
+                    {
+                        account ? "Log out" : "Log in"
+                    }
+                </Button>
             </Toolbar>
         </AppBar>
     )
