@@ -15,6 +15,7 @@ import {useState} from "react";
 import axios from "axios";
 import {Account} from '../../../../blog/common/account'
 import {ErrorResponse} from '../../../../blog/common'
+import AvatarUpload from "../../components/AvatarUpload";
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('')

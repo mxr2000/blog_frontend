@@ -1,4 +1,4 @@
-import {AppBar, Badge, Button, IconButton, Toolbar, Typography} from "@mui/material";
+import {AppBar, Avatar, Badge, Button, IconButton, Toolbar, Typography} from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import {useState} from "react";
@@ -30,12 +30,24 @@ const MainAppBar = () => {
                 >
                     <MenuIcon/>
                 </IconButton>
-                    <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
-                        <a href={"/home"} style={{textDecoration: 'none', color: 'white'}}>
-                            LEGAL FORUM
-                        </a>
+                <Typography variant="h6" component="div" sx={{flexGrow: 1}}>
+                    <Link to={"/home"} style={{textDecoration: 'none', color: 'white'}}>
+                        LEGAL FORUM
+                    </Link>
 
-                    </Typography>
+                </Typography>
+                {
+                    account ? (
+                        <IconButton
+                            size="large"
+                            aria-label="show 17 new notifications"
+                            color="inherit"
+                            onClick={() => navigate("/account/" + account.email)}
+                        >
+                            <Avatar>M</Avatar>
+                        </IconButton>
+                    ) : <></>
+                }
                 <IconButton
                     size="large"
                     aria-label="show 17 new notifications"

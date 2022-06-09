@@ -10,6 +10,8 @@ import MainAppBar from "../../components/MainAppBar";
 import CommentCell from "../../components/CommentCell";
 import Button from "@mui/material/Button";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import {ArticleImage} from '../../../../blog/common/file'
+import ArticleImageCell from "../../components/ArticleImageCell";
 
 
 const ArticleDetailPage = () => {
@@ -26,6 +28,9 @@ const ArticleDetailPage = () => {
                 const {article, comments} = resp.data.data
                 setContent(article.content ?? "no content")
                 setHeader(article.header)
+                if (article.images) {
+                    setImages(article.images)
+                }
                 setComments(comments)
             })
             .catch((err) => {
@@ -36,6 +41,7 @@ const ArticleDetailPage = () => {
     const [content, setContent] = useState('')
     const [comments, setComments] = useState<Comment[]>([])
     const [newComment, setNewComment] = useState('')
+    const [images, setImages] = useState<ArticleImage[]>([])
 
     const [account] = useLocalStorage<Account | undefined>('account', undefined)
     const [token] = useLocalStorage<string | undefined>('token', undefined)
@@ -78,6 +84,19 @@ const ArticleDetailPage = () => {
                     <Typography variant="body1" gutterBottom sx={{mt: 2}}>
                         {content}
                     </Typography>
+                    {
+                        images.length != 0 ?
+                        <Box sx={{m: 2}}>
+                            <Divider>
+                                <Typography variant={"h5"}>
+                                    Images
+                                </Typography>
+                            </Divider>
+                            {
+                                images.map((image, index) => <ArticleImageCell articleImage={image} key={index}/>)
+                            }
+                        </Box> : <></>
+                    }
                     <Divider>
                         <Typography variant={"h5"}>
                             Comments

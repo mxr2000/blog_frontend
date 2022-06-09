@@ -18,6 +18,7 @@ import axios, {AxiosResponse} from "axios";
 import {useNavigate} from "react-router-dom";
 import {Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from "@mui/material";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import Dropzone from 'react-dropzone-uploader'
 
 
 const LogInPage = () => {
@@ -111,6 +112,7 @@ const LogInPage = () => {
                             control={<Checkbox value="remember" color="primary"/>}
                             label="Remember me"
                         />
+
                         <Button
                             fullWidth
                             variant="contained"

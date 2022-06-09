@@ -17,6 +17,7 @@ import {useNavigate} from "react-router-dom";
 import {useSelector} from "react-redux";
 import {useAppDispatch, useAppSelector} from "../../redux/hooks";
 import {loadBlocks, selectBlocks} from "../../redux/slices/blocksSlice";
+import BlockCell from "../../components/BlockCell";
 
 const article1: Article = {
     email: "mxr@qq.com",
@@ -31,7 +32,7 @@ const HomePage = () => {
     const drawerWidth = 240;
     const navigate = useNavigate()
     const [articles, setArticles] = useState<Article[]>([article1])
-    const blocks = useSelector(selectBlocks)
+    const [blocks, setBlocks] = useState<Block[]>([])
     const dispatch = useAppDispatch()
     useEffect(() => {
         axios({
@@ -41,15 +42,13 @@ const HomePage = () => {
             .then((resp: AxiosResponse<HomePageResponse>) => {
                 console.log(resp.data.data.articles)
                 setArticles(resp.data.data.articles)
+                setBlocks(resp.data.data.blocks)
             })
             .catch((err: ErrorResponse) => {
 
             })
     }, [])
-    useEffect(() => {
-        if (blocks.length != 1) {
-            return
-        }
+    /*useEffect(() => {
         axios({
             method: 'get',
             url: '/api/block'
@@ -62,37 +61,16 @@ const HomePage = () => {
                 console.log(err)
             })
 
-    }, [])
+    }, [])*/
     return (
         <Box sx={{flexGrow: 1}}>
             <MainAppBar/>
             <Stack direction={"row"} spacing={2} justifyContent={"center"} marginTop={2}>
                 <Box sx={{width: '100%', maxWidth: 240, bgcolor: 'background.paper'}}>
                     <List>
-                        <ListItem>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <MailIcon/>
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText primary="Photos" secondary="Jan 9, 2014"/>
-                        </ListItem>
-                        <ListItem>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <MailIcon/>
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText primary="Work" secondary="Jan 7, 2014"/>
-                        </ListItem>
-                        <ListItem>
-                            <ListItemAvatar>
-                                <Avatar>
-                                    <MailIcon/>
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText primary="Vacation" secondary="July 20, 2014"/>
-                        </ListItem>
+                        {
+                            blocks.map((block, index) => <BlockCell block={block} key={index}/>)
+                        }
                     </List>
                 </Box>
 

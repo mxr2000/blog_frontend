@@ -7,26 +7,35 @@ import {
     MenuItem,
     Select,
     FormControl,
-    InputLabel, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions
+    InputLabel, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CardMedia, Card, Divider
 } from "@mui/material";
 import {useEffect, useState} from "react";
-import {Article} from '../../../../blog/common/article'
-import {Block} from '../../../../blog/common/block'
+import {Article, PostArticleRequest} from '../../../../blog/common/article'
+import {Account} from '../../../../blog/common/account'
 import {ErrorResponse} from '../../../../blog/common/index'
-import axios from "axios";
+import {Block} from '../../../../blog/common/block'
+import axios, {AxiosResponse} from "axios";
 import {useNavigate} from "react-router-dom";
-import {useSelector} from "react-redux";
-import {selectAccount, selectToken} from "../../redux/slices/accountSlice";
-import {selectBlocks} from "../../redux/slices/blocksSlice";
+import useLocalStorage from "../../hooks/useLocalStorage";
+import FileUpload from "../../components/FileUpload";
+import {getFileUrl} from "../../utils/file";
 
 
 const CreateArticlePage = () => {
+    const [imageIdNamePairs, setImageIdNamePairs] = useState<{
+        id: number,
+        name: string
+    }[]>([])
     const [header, setHeader] = useState('')
     const [content, setContent] = useState('')
-    const blocks = useSelector(selectBlocks)
+    const [blocks, setBlocks] = useState<Block[]>([{
+        id: 1,
+        name: "default"
+    }])
     const [blockId, setBlockId] = useState<number>(blocks[0].id)
-    const account = useSelector(selectAccount)
-    const token = useSelector(selectToken)
+    const [account] = useLocalStorage<Account | undefined>('account', undefined)
+    const [token] = useLocalStorage<string | undefined>('token', undefined)
+
     const navigate = useNavigate()
 
     const [open, setOpen] = useState(false);
@@ -51,9 +60,13 @@ const CreateArticlePage = () => {
             header: header,
             content: content
         }
+        const data: PostArticleRequest = {
+            article: article,
+            imageIds: imageIdNamePairs.map(p => p.id)
+        }
         axios({
             method: 'post',
-            data: article,
+            data: data,
             url: "/api/article",
             headers: {
                 "authorization": "Bearer " + token
@@ -72,6 +85,17 @@ const CreateArticlePage = () => {
     useEffect(() => {
         if (!account) {
             navigate("/")
+        } else {
+            axios({
+                method: 'get',
+                url: "/api/block"
+            })
+                .then((resp: AxiosResponse<Block[]>) => {
+                    setBlocks(resp.data)
+                })
+                .catch((err: ErrorResponse) => {
+
+                })
         }
     }, [])
 
@@ -127,7 +151,32 @@ const CreateArticlePage = () => {
                             />
                         </Grid>
                         <Grid item xs={12} md={12}>
-                            <Button fullWidth={true} onClick={submitArticle}>submit</Button>
+                            <FormControl variant="standard" fullWidth={true}>
+                                <Divider>Images</Divider>
+                                <FileUpload onAccepted={(name, id) => {
+                                    console.log(id)
+                                    const newList = [...imageIdNamePairs, {
+                                        name, id
+                                    }]
+                                    setImageIdNamePairs(newList)
+                                }}/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                            {
+                                imageIdNamePairs.map((p, index) => (
+                                    <Card sx={{maxWidth: '300'}}>
+                                        <CardMedia
+                                            component="img"
+                                            alt="green iguana"
+                                            image={getFileUrl(p.id, p.name)}
+                                        />
+                                    </Card>
+                                ))
+                            }
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                            <Button fullWidth={true} variant="contained" onClick={submitArticle}>submit</Button>
                             <Dialog
                                 open={open}
                                 onClose={handleClose}
@@ -137,12 +186,7 @@ const CreateArticlePage = () => {
                                 <DialogTitle id="alert-dialog-title">
                                     Network error
                                 </DialogTitle>
-                                {/*<DialogContent>
-                                    <DialogContentText id="alert-dialog-description">
-                                        Let Google help apps determine location. This means sending anonymous
-                                        location data to Google, even when no apps are running.
-                                    </DialogContentText>
-                                </DialogContent>*/}
+
                                 <DialogActions>
                                     <Button autoFocus onClick={handleClose}>
                                         close

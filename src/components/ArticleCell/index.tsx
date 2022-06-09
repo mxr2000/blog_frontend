@@ -25,16 +25,20 @@ const ArticleCell = (props: {
                 <Divider/>
 
             </div>
-            <div>
-                <div className={styles.thumbContainer}>
-                    <ThumbUp/>
-                    <div>{positiveLikesCount}</div>
-                </div>
-                <div className={styles.thumbContainer}>
-                    <ThumbDown/>
-                    <div>{negativeLikesCount}</div>
-                </div>
-            </div>
+            {
+                positiveLikesCount ? (
+                    <div>
+                        <div className={styles.thumbContainer}>
+                            <ThumbUp/>
+                            <div>{positiveLikesCount}</div>
+                        </div>
+                        <div className={styles.thumbContainer}>
+                            <ThumbDown/>
+                            <div>{negativeLikesCount}</div>
+                        </div>
+                    </div>
+                ) : <></>
+            }
         </div>
     )
 }
