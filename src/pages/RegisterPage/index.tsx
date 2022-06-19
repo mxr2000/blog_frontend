@@ -16,12 +16,14 @@ import axios from "axios";
 import {Account} from '../../../../blog/common/account'
 import {ErrorResponse} from '../../../../blog/common'
 import AvatarUpload from "../../components/AvatarUpload";
+import {useNavigate} from "react-router-dom";
 
 const RegisterPage = () => {
     const [email, setEmail] = useState('')
     const [username, setUsername] = useState('')
     const [pwd, setPwd] = useState('')
     const [repeatedPwd, setRepeatedPwd] = useState('')
+    const navigate = useNavigate()
 
     const onRegistered = () => {
         const account: Account = {
@@ -35,7 +37,7 @@ const RegisterPage = () => {
             data: account
         })
             .then((result) => {
-
+                navigate("/")
             })
             .catch((err: ErrorResponse) => {
 
@@ -128,10 +130,10 @@ const RegisterPage = () => {
                             label="Remember me"
                         />
                         <Button
-                            type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            onClick={onRegistered}
                         >
                             Register
                         </Button>

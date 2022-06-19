@@ -6,4 +6,9 @@ const getFileUrl = (id: number, name: string): string => {
     return axios.defaults.baseURL +  "static/image/" + fileName
 }
 
-export {getFileUrl}
+const getFileFormat = (name: string): string | undefined => {
+    const nameParts = name.split('.')
+    return nameParts.length == 0 ? undefined : nameParts[nameParts.length - 1]
+}
+
+export {getFileUrl, getFileFormat}

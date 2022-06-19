@@ -23,6 +23,7 @@ function App() {
                     <Route path={"/"} element={<LogInPage/>}/>
                     <Route path={"/register"} element={<RegisterPage/>}/>
                     <Route path={"/home"} element={<HomePage/>}/>
+                    <Route path={"/home/:pageIndex"} element={<HomePage/>}/>
                     <Route path={"/create_article"} element={<CreateArticlePage/>}/>
                     <Route path={"/articles/:blockId/:pageIndex"} element={<BlockArticlesPage/>}/>
                     <Route path={"/article/:articleId"} element={<ArticleDetailPage/>}/>

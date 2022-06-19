@@ -9,7 +9,7 @@ const ArticleImageCell = (props: {
     const {id, name} = props.articleImage.file
 
     return (
-        <Card >
+        <Card sx={{m: 2}}>
             <CardMedia
                 component="img"
                 alt="green iguana"

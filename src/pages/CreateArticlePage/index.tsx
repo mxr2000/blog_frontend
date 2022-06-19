@@ -7,7 +7,17 @@ import {
     MenuItem,
     Select,
     FormControl,
-    InputLabel, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, CardMedia, Card, Divider
+    InputLabel,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
+    CardMedia,
+    Card,
+    Divider,
+    List
 } from "@mui/material";
 import {useEffect, useState} from "react";
 import {Article, PostArticleRequest} from '../../../../blog/common/article'
@@ -19,10 +29,17 @@ import {useNavigate} from "react-router-dom";
 import useLocalStorage from "../../hooks/useLocalStorage";
 import FileUpload from "../../components/FileUpload";
 import {getFileUrl} from "../../utils/file";
+import InvalidAccountDialog from "../../components/InvalidAccountDialog";
+import {getAuthorizationHeader} from "../../utils/auth";
+import ArticleFileCell from "../../components/ArticleFileCell";
 
 
 const CreateArticlePage = () => {
     const [imageIdNamePairs, setImageIdNamePairs] = useState<{
+        id: number,
+        name: string
+    }[]>([])
+    const [fileIdNamePairs, setFileIdNamePairs] = useState<{
         id: number,
         name: string
     }[]>([])
@@ -62,15 +79,14 @@ const CreateArticlePage = () => {
         }
         const data: PostArticleRequest = {
             article: article,
-            imageIds: imageIdNamePairs.map(p => p.id)
+            imageIds: imageIdNamePairs.map(p => p.id),
+            fileIds: fileIdNamePairs.map(p => p.id)
         }
         axios({
             method: 'post',
             data: data,
             url: "/api/article",
-            headers: {
-                "authorization": "Bearer " + token
-            }
+            headers: getAuthorizationHeader(token)
         })
             .then((result) => {
                 console.log(result)
@@ -153,19 +169,27 @@ const CreateArticlePage = () => {
                         <Grid item xs={12} md={12}>
                             <FormControl variant="standard" fullWidth={true}>
                                 <Divider>Images</Divider>
-                                <FileUpload onAccepted={(name, id) => {
-                                    console.log(id)
-                                    const newList = [...imageIdNamePairs, {
-                                        name, id
-                                    }]
+                                <FileUpload onAccepted={result => {
+                                    const newList = [...imageIdNamePairs, ...result]
                                     setImageIdNamePairs(newList)
-                                }}/>
+                                }}
+                                onError={() => setOpen(true)}/>
+                            </FormControl>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                            <FormControl variant="standard" fullWidth={true}>
+                                <Divider>Files</Divider>
+                                <FileUpload onAccepted={result => {
+                                    const newList = [...fileIdNamePairs, ...result]
+                                    setFileIdNamePairs(newList)
+                                }}
+                                            onError={() => setOpen(true)}/>
                             </FormControl>
                         </Grid>
                         <Grid item xs={12} md={12}>
                             {
                                 imageIdNamePairs.map((p, index) => (
-                                    <Card sx={{maxWidth: '300'}}>
+                                    <Card sx={{maxWidth: '300'}} key={index}>
                                         <CardMedia
                                             component="img"
                                             alt="green iguana"
@@ -176,23 +200,18 @@ const CreateArticlePage = () => {
                             }
                         </Grid>
                         <Grid item xs={12} md={12}>
-                            <Button fullWidth={true} variant="contained" onClick={submitArticle}>submit</Button>
-                            <Dialog
-                                open={open}
-                                onClose={handleClose}
-                                aria-labelledby="alert-dialog-title"
-                                aria-describedby="alert-dialog-description"
-                            >
-                                <DialogTitle id="alert-dialog-title">
-                                    Network error
-                                </DialogTitle>
+                            <List>
+                                {
+                                    fileIdNamePairs.map((p, index) => (
+                                        <ArticleFileCell file={{articleId: 0, file: {id: p.id, name: p.name, email: ""}}} key={index}/>
+                                    ))
+                                }
+                            </List>
 
-                                <DialogActions>
-                                    <Button autoFocus onClick={handleClose}>
-                                        close
-                                    </Button>
-                                </DialogActions>
-                            </Dialog>
+                        </Grid>
+                        <Grid item xs={12} md={12}>
+                            <Button fullWidth={true} variant="contained" onClick={submitArticle}>submit</Button>
+                            <InvalidAccountDialog open={open} setOpen={setOpen}/>
                         </Grid>
 
                     </Grid>

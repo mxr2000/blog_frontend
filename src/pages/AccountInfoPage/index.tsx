@@ -9,6 +9,8 @@ import {Comment} from '../../../../blog/common/comment'
 import ArticleCell from "../../components/ArticleCell";
 import CommentCell from "../../components/CommentCell";
 import useLocalStorage from "../../hooks/useLocalStorage";
+import AccountInfoColumn from "../../components/AccountInfoColumn";
+import AccountEdit from "../../components/AccountEdit";
 
 function TabPanel(props: {
     children?: React.ReactNode;
@@ -49,6 +51,7 @@ const AccountInfoPage = () => {
         comments: Comment[]
     }[]>([])
     const [account, setAccount] = useState<Account | undefined>(undefined)
+    const [selfAccount, setSelfAccount] = useLocalStorage<Account | undefined>('account', undefined)
     useEffect(() => {
         axios({
             method: 'get',
@@ -81,7 +84,7 @@ const AccountInfoPage = () => {
             <Stack direction={"row"} spacing={2} justifyContent={"center"}>
                 <TabPanel value={tabIndex} index={0}>
                     {
-                        articles.map((a, index) => <ArticleCell article={a} key={index}/>)
+                        articles.map((a, index) => <ArticleCell article={a} key={index}  editable={true}/>)
                     }
                 </TabPanel>
                 <TabPanel value={tabIndex} index={1}>
@@ -105,6 +108,10 @@ const AccountInfoPage = () => {
                 </TabPanel>
                 <TabPanel value={tabIndex} index={2}>
                     {
+                        account ? (
+                            (selfAccount && selfAccount.email == account.email) ? <AccountEdit account={selfAccount} setAccount={setSelfAccount}/> :
+                                <AccountInfoColumn account={account}/>
+                        ) : <></>
                     }
                 </TabPanel>
             </Stack>

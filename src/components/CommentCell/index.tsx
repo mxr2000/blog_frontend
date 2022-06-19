@@ -1,6 +1,6 @@
 import {Comment} from '../../../../blog/common/comment'
 import styles from './index.module.css'
-import {Avatar} from "@mui/material";
+import {UserAvatar} from "../UserAvatar";
 
 const CommentCell = (props: {
     comment: Comment
@@ -8,7 +8,7 @@ const CommentCell = (props: {
     const {account, content, createdTime} = props.comment
     return (
         <div className={styles.container}>
-            <Avatar>M</Avatar>
+            <UserAvatar account={account}/>
             <div>
                 <div className={styles.username}>
                     {account.username ?? account.email} <span className={styles.time}>{createdTime}</span>
