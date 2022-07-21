@@ -15,7 +15,7 @@ import axios from "axios";
 
 function App() {
     //axios.defaults.baseURL = "http://localhost:8000/"
-    axios.defaults.baseURL = "http://34.67.235.141:8000/"
+    axios.defaults.baseURL = "http://34.125.209.192:8080/"
     return (
         <Provider store={store}>
             <BrowserRouter>
